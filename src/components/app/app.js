@@ -87,6 +87,12 @@ export default class App extends Component {
             });
         };
 
+        this.onChangeSearch = () => {
+
+           this.setState ({listData}) => {
+                const newArr = listData.filter((elem) => this.state.content === e.target.value  )
+            }
+        }
 
     }
 
@@ -100,7 +106,9 @@ export default class App extends Component {
             <div className="todo-app">
                 <Header toDo={todoCount} done={doneCount}/>
                 <div className="top-panel d-flex">
-                    <SearchPanel/>
+                    <SearchPanel
+                        onChangeSearch={this.onChangeSearch}
+                    />
                     <ItemStatusFilter/>
                 </div>
 
