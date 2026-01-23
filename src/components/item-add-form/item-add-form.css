@@ -5,3 +5,11 @@
 .item-add-form input {
     margin-right: 3px;
 }
+
+.form-control {
+    margin-top: 25px;
+}
+
+.item-add-form .btn-outline-dark {
+     margin-top: 25px;
+}

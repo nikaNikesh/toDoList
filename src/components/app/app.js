@@ -14,88 +14,157 @@ export default class App extends Component {
                 content: content,
                 important: false,
                 done: false,
-                id: this.minIdAddItem++
+                id: this.minIdAddItem++,
+                searchVisibility: true,
+                filterVisibility: true
             }
         }
 
         this.state = {
             listData: [
-                this.createItem('learn React'),
-                this.createItem('create the first app'),
-                this.createItem('to wash clothes')
+                this.createItem('fix the header layout'),
+                this.createItem('read about CSS Flexbox'),
+                this.createItem('learn 3 new HTML tags')
             ],
         }
 
-
-        this.deleteItem = (id) => {
-            this.setState(({listData}) => {
-                    const idDelete = listData.findIndex((elem) => elem.id === id);
-                    const newListData = [
-                        ...listData.slice(0, idDelete),
-                        ...listData.slice(idDelete + 1)
-                    ];
-                    return {
-                        listData: newListData
-                    }
-                }
-            )
-        }
         this.addItem = (content) => {
             const newItemArray = this.createItem(content);
 
             this.setState(({listData}) => {
-                    const newArray = [
-                        ...listData,
-                        newItemArray
-                    ];
-                    return ({
-                        listData: newArray
-                    });
-                }
-            )
+                const newArray = [
+                    ...listData,
+                    newItemArray
+                ];
+                return ({
+                    listData: newArray
+                });
+            });
         }
 
         this.toggleProperty = (array, id, propName) => {
-                const idDelete = array.findIndex((elem) => elem.id === id);
-                const oldItem = array[idDelete];
-                const newItem = {
-                    ...oldItem,
-                    [propName]: !oldItem[propName]
-                };
-                return [
-                        ...array.slice(0, idDelete),
-                        newItem,
-                        ...array.slice(idDelete + 1)
-                ];
-
+            const indexChanged = array.findIndex((elem) => elem.id === id);
+            const oldItem = array[indexChanged];
+            const newItem = {
+                ...oldItem,
+                [propName]: !oldItem[propName]
+            };
+            return [
+                ...array.slice(0, indexChanged),
+                newItem,
+                ...array.slice(indexChanged + 1)
+            ];
         }
 
         this.onToggleDone = (id) => {
-            this.setState( ({ listData }) => {
+            this.setState(({listData}) => {
                 return {
                     listData: this.toggleProperty(listData, id, 'done')
                 }
             });
         };
 
-
         this.onToggleImportant = (id) => {
-             this.setState( ({ listData }) => {
+            this.setState(({listData}) => {
                 return {
                     listData: this.toggleProperty(listData, id, 'important')
                 }
             });
         };
 
-        this.onChangeSearch = () => {
-
-           this.setState ({listData}) => {
-                const newArr = listData.filter((elem) => this.state.content === e.target.value  )
+        this.matchSearch = (array, searchContent) => {
+            const newArr = [];
+            for (let i = 0; i < array.length; i++) {
+                const oldItem = array[i];
+                const newItem = {
+                    ...oldItem,
+                    searchVisibility: oldItem.content.toLowerCase().includes(searchContent)
+                }
+                newArr.push(newItem);
             }
+            return newArr;
         }
 
-    }
+        this.onToggleSearch = (event) => {
+            const searchContent = event.target.value.toLowerCase();
 
+            this.setState(({listData}) => {
+                const newArray = this.matchSearch(listData, searchContent);
+
+                return {
+                    listData: newArray
+                }
+            });
+        }
+
+        this.onFilterDone = () => {
+            this.setState(({listData}) => {
+                const newArray = [];
+                for (let i = 0; i < listData.length; i++) {
+                    const oldItem = listData[i];
+                    const newItem = {
+                        ...oldItem
+                    }
+                    newItem.filterVisibility = newItem.done;
+                    newArray.push(newItem);
+                }
+
+                return {
+                    listData: newArray
+                }
+            });
+
+        }
+
+        this.onFilterActive = () => {
+            this.setState(({listData}) => {
+                const newArray = [];
+                for (let i = 0; i < listData.length; i++) {
+                    const oldItem = listData[i];
+                    const newItem = {
+                        ...oldItem
+                    }
+                    newItem.filterVisibility = !newItem.done;
+                    newArray.push(newItem);
+                }
+
+                return {
+                    listData: newArray
+                }
+            });
+        }
+
+        this.onFilterAll = () => {
+            this.setState(({listData}) => {
+                const newArray = [];
+                for (let i = 0; i < listData.length; i++) {
+                    const oldItem = listData[i];
+                    const newItem = {
+                        ...oldItem
+                    }
+                    newItem.filterVisibility = true;
+                    newArray.push(newItem);
+                }
+
+                return {
+                    listData: newArray
+                }
+            });
+        }
+
+        this.deleteItem = (id) => {
+            this.setState(({listData}) => {
+                const idDelete = listData.findIndex((elem) => elem.id === id);
+                const newListData = [
+                    ...listData.slice(0, idDelete),
+                    ...listData.slice(idDelete + 1)
+                ];
+                return {
+                    listData: newListData
+                }
+            });
+        }
+    };
 
     render() {
         const {listData} = this.state;
@@ -107,18 +176,20 @@ export default class App extends Component {
                 <Header toDo={todoCount} done={doneCount}/>
                 <div className="top-panel d-flex">
                     <SearchPanel
-                        onChangeSearch={this.onChangeSearch}
+                        onToggleSearch={this.onToggleSearch}
                     />
-                    <ItemStatusFilter/>
+                    <ItemStatusFilter
+                        onFilterDone={this.onFilterDone}
+                        onFilterActive={this.onFilterActive}
+                        onFilterAll={this.onFilterAll}
+                    />
                 </div>
-
                 <List things={listData}
                       onDeleted={this.deleteItem}
                       onToggleImportant={this.onToggleImportant}
-                      omToggleDone={this.onToggleDone}
+                      onToggleDone={this.onToggleDone}
                 />
-                <ItemAddForm onItemAdded={this.addItem}
-                />
+                <ItemAddForm onItemAdded={this.addItem}/>
             </div>
         );
     }

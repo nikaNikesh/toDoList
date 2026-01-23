@@ -23,7 +23,6 @@ export default class ItemAddForm extends Component {
         }
     }
 
-
     render() {
         return (
             <form className="item-add-form d-flex"
@@ -32,14 +31,12 @@ export default class ItemAddForm extends Component {
                        className="form-control"
                        onChange={this.onContentChange}
                        placeholder="What needs to be done"
-                       value={this.state.content}/>
-                <button
-                    className="btn btn-outline-secondary"
-                >
+                       value={this.state.content}
+                />
+                <button className="btn btn-outline-dark">
                     Add Item
                 </button>
             </form>
         )
     }
-
 }

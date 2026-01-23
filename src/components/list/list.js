@@ -2,17 +2,22 @@ import React from 'react';
 import ListItem from "../list-item/list-item";
 import './list.css';
 
-const List = ({things, onDeleted, onToggleImportant, omToggleDone}) => {
+const List = ({things, onDeleted, onToggleImportant, onToggleDone}) => {
     const elements = things.map((item) => {
-        const {id, ...itemProps} = item;
+        const {id, searchVisibility, filterVisibility, ...itemProps} = item;
+        let classNames = "list-group-item";
+
+        if (!searchVisibility || !filterVisibility) {
+            classNames += " invisible";
+        }
 
         return (
-            <li key={id} className="list-group-item">
+            <li key={id} className={classNames}>
                 <ListItem
                     {...itemProps}
                     onDeleted={ () => onDeleted(id) }
                     onToggleImportant={ () => onToggleImportant(id) }
-                    onToggleDone={ () => omToggleDone(id) }
+                    onToggleDone={ () => onToggleDone(id) }
                 />
             </li>
         );
